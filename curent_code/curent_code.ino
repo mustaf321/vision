@@ -10,8 +10,8 @@ DHT dht(DHTPIN, DHTTYPE);
 float t = 0.0;
 float h = 0.0;
 
-const char* ssid = "FRITZ!Box 7430 QS";
-const char* password = "31649031723970168891";
+const char* ssid = "WIFINAME";
+const char* password = "PASWORD";
 
 WiFiServer server(80);
 
