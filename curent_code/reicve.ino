@@ -42,12 +42,11 @@ void setup() {
 void loop() {
   delay(3000);
   LoRa.receive();
-  // do nothing
+  
 }
 
 
 
- 
 void onReceive(int packetSize) {
   // received a packet
  
@@ -56,17 +55,17 @@ void onReceive(int packetSize) {
   // read packet
   for (int i = 0; i < packetSize; i++) {
 
+  // revice bytes from lora
   byte b = LoRa.read();
  
-
+  // translate bytes in to chars
   char demo = (char) b ;
   
+  //save cahrs in arry
   str[i]=demo;
    
-
- 
   }
-
+  //create String out of the char arry
   String res ="";
  
    for(int j=0;j< packetSize; j++ ){
@@ -89,11 +88,11 @@ Serial.println(LoRa.packetRssi());
 Serial.println("---------");
 
 
-String temp1 = String(String(res[19])+String(res[20])+String(res[21])+String(res[22])+String(res[23]));
+String temp1 = String(String(res[18])+String(res[19])+String(res[20])+String(res[21])+String(res[22]));
 Serial.println(temp1);
-String hum = String(String(res[31])+String(res[32])+String(res[33])+String(res[34])+String(res[35]));
+String hum = String(String(res[30])+String(res[31])+String(res[32])+String(res[33])+String(res[34]));
 Serial.println(hum);
-String del = String(String(res[45])+String(res[46])+String(res[47])+String(res[48])+String(res[49]));
+String del = String(String(res[44])+String(res[45])+String(res[46])+String(res[47])+String(res[48]));
 Serial.println(del);
 
 DynamicJsonDocument doc1(1024);
