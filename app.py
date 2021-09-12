@@ -13,7 +13,9 @@ class Measurement(BaseModel):
 
 @app.get('/api/v1/measurements/measurment')
 async def measurements():
-    return db
+   c = db_handel.get_mesuremnt
+   print(c)
+   return db
 
 @app.get('/api/v1/measurements/{measurment_id}')
 async def get_measurement(measurment_id: int):

@@ -2,13 +2,15 @@ from datetime import datetime
 
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
-
+token = "xl_5uteTN5MNikM6nWXBFfzXLRGmAwBl9QP3AcBSDYjbbOvtZGFj28cKUJM45phmB5HoMo83bOtOe1i1fbatjw=="
+bucket = "messungen"
+org = "dev"
+client = InfluxDBClient(url="http://localhost:8086", token=token)
+ 
 # You can generate a Token from the "Tokens Tab" in the UI
 def add_tempetratur(tabelname:str,tag:str,temp:float,humidity:float,SingleDS18B20:float): 
- token = "4k6hl6C_GM1r2EjVyWIJJ4muZSeHr5ufvdP761paPSukNwLv3FMLMiSGqkfg2Z4lEs-aFxFk9dF8wKj3ETxOMw=="
- bucket = "mesurement"
- org = "privat"
- client = InfluxDBClient(url="http://localhost:8086", token=token)
+
+ 
  write_api = client.write_api(write_options=SYNCHRONOUS)
  
  point = Point(tabelname)\
@@ -20,8 +22,10 @@ def add_tempetratur(tabelname:str,tag:str,temp:float,humidity:float,SingleDS18B2
  
  return True
 
-
-
+async def get_mesuremnt():
+ query = f'from(bucket: \\"{bucket}\\") |> range(start: -1h)'
+ tables = client.query_api().query(query, org=org)
+ print(tables)
 
 
 
