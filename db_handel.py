@@ -22,10 +22,20 @@ def add_tempetratur(tabelname:str,tag:str,temp:float,humidity:float,SingleDS18B2
  
  return True
 
-async def get_mesuremnt():
- query = f'from(bucket: \\"{bucket}\\") |> range(start: -1h)'
- tables = client.query_api().query(query, org=org)
- print(tables)
 
+def get_mesuremnt():
+ query = f'''from(bucket: "messungen") |> range(start: -1h)  |> filter(fn: (r) => r["_measurement"] == "mesungen")
+ |> last()
+  |> filter(fn: (r) => r["_field"] == "SingleDS18B20" or r["_field"] == "TEMP" or r["_field"] == "HUIM") '''
+ result = client.query_api().query(query, org=org)
+
+ results = []
+ 
+ for table in result:
+  for record in table.records:
+    results.append((record.get_field(), record.get_value()))
+  
+ print(len(results))  
+ return results
 
 

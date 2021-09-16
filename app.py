@@ -1,8 +1,21 @@
 from fastapi import FastAPI
 import uvicorn
 import db_handel
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 app = FastAPI()
+origins = [
+    
+    "http://localhost:19006",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 db =[]
 
 class Measurement(BaseModel):
@@ -12,10 +25,10 @@ class Measurement(BaseModel):
     SingleDS18B20 : float
 
 @app.get('/api/v1/measurements/measurment')
-async def measurements():
-   c = db_handel.get_mesuremnt
+def measurements():
+   c =   db_handel.get_mesuremnt()
    print(c)
-   return db
+   return c
 
 @app.get('/api/v1/measurements/{measurment_id}')
 async def get_measurement(measurment_id: int):
