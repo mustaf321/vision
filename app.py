@@ -3,6 +3,7 @@ import uvicorn
 import db_handel
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from fastapi.encoders import jsonable_encoder
 app = FastAPI()
 origins = [
     
@@ -19,7 +20,7 @@ app.add_middleware(
 db =[]
 
 class Measurement(BaseModel):
-    sensorID: int
+    sensorid: int
     temperature : float
     humidity : float
     SingleDS18B20 : float
@@ -28,7 +29,7 @@ class Measurement(BaseModel):
 def measurements():
    c =   db_handel.get_mesuremnt()
    print(c)
-   return c
+   return jsonable_encoder(c)
 
 @app.get('/api/v1/measurements/{measurment_id}')
 async def get_measurement(measurment_id: int):
@@ -42,11 +43,11 @@ def add_tempetratur( measurement : Measurement):
 
 @app.put('/api/v1/temperatures/{sensorID}' )
 def update_measurement(sensorID: int, measurement : Measurement):
-  k = db_handel.add_tempetratur("mesungen",measurement.sensorID,measurement.temperature,measurement.humidity,measurement.SingleDS18B20)
+  k = db_handel.add_tempetratur("mesungen",measurement.sensorid,measurement.temperature,measurement.humidity,measurement.SingleDS18B20)
   print(k)
-  db[sensorID] = measurement.dict() 
-  print(db[sensorID])
-  return db[sensorID]
+  db[sensorid] = measurement.dict() 
+  print(db[sensorid])
+  return db[sensorid]
 
 @app.delete('/api/v1/measurements/{measurment_id}')
 async def delet_measurement(measurment_id: int):

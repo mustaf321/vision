@@ -12,16 +12,21 @@ client = InfluxDBClient(url="http://localhost:8086", token=token)
 
 
 
+def get_mesuremnt():
+ query = f'''from(bucket: "messungen") |> range(start: -1m)  |> filter(fn: (r) => r["_measurement"] == "mesungen")
+  |> filter(fn: (r) => r["_field"] == "SingleDS18B20" or r["_field"] == "TEMP" or r["_field"] == "HUIM") '''
+ result = client.query_api().query(query, org=org)
 
-
-
-query = f'from(bucket: "messungen") |> range(start: -1h) |> filter(fn: (r) => r["_measurement"] == "mesungen")|> filter(fn: (r) => r["_field"] == "TEMP") '
-result = client.query_api().query(query, org=org)
-
-results = []
-for table in result:
+ results = []
+ for table in result:
   for record in table.records:
+    print(record.get_time())
     results.append((record.get_field(), record.get_value()))
+  
+ print(len(results))  
+ return results 
+ 
+ 
 
-
-print(results[0])
+c = get_mesuremnt()
+print(c)
