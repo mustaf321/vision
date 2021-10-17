@@ -1,10 +1,14 @@
 from fastapi import FastAPI
+
 import uvicorn
 import db_handel
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi.encoders import jsonable_encoder
+from routers import alarms, nodes
+
 app = FastAPI()
+
 origins = [
     
     "http://localhost:19006",
@@ -17,6 +21,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+app.include_router(alarms.router)
+app.include_router(nodes.router)
 db =[]
 
 class Measurement(BaseModel):
@@ -24,6 +30,7 @@ class Measurement(BaseModel):
     temperature : float
     humidity : float
     SingleDS18B20 : float
+
 
 @app.get('/api/v1/measurements/measurment')
 def measurements():
