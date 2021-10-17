@@ -45,9 +45,7 @@ def add_tempetratur( measurement : Measurement):
 def update_measurement(sensorID: int, measurement : Measurement):
   k = db_handel.add_tempetratur("mesungen",measurement.sensorid,measurement.temperature,measurement.humidity,measurement.SingleDS18B20)
   print(k)
-  db[sensorid] = measurement.dict() 
-  print(db[sensorid])
-  return db[sensorid]
+
 
 @app.delete('/api/v1/measurements/{measurment_id}')
 async def delet_measurement(measurment_id: int):

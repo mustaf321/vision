@@ -5,4 +5,4 @@ uvicorn app:app --host 192.168.2.124 --port 8080 --reload
 
 influx accoiunt 
 musti
-22MUStek-22
+22Mustek22
