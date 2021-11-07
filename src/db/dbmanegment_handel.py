@@ -15,7 +15,7 @@ def list_alarms():
     results =[]
     print(db)
     for result in alarms.find({},{"_id":0}):
-        print(result)
+        
         results.append(result)
     print(results)
     return results
@@ -24,6 +24,7 @@ def list_alarms():
 def add_alarm(nodeid, range):
     print(db)
     node_exists = nodes.find_one({"nodeid": nodeid})
+    print(nodeid)
     print(node_exists)
     if node_exists is not None:
         alarms.update({"nodeid":nodeid},{"nodeid": nodeid, "range":range.dict()},upsert=True)

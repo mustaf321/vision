@@ -1,5 +1,5 @@
-from websocket.broadcaster import broadcast_new_alarm
-from db.dbmanegment_handel import list_alarms, add_alarm, get_alarm, delete_alarm
+from websocket.broadcaster import broadcast_new_alarm, broadcast_new_node
+from db.dbmanegment_handel import list_alarms, add_alarm, get_alarm, delete_alarm,add_node,list_nodes
 
 
 
@@ -17,8 +17,20 @@ async def received_new_alarm(nodeid,range):
     print("Received new Alarm")
     print(nodeid)
     print(range)
-    if add_alarm(nodeid,range):
+    x = add_alarm(nodeid,range)
+    if x :
      await broadcast_new_alarm(nodeid,range)
+     return True
+    else:
+     return False
+
+
+
+async def received_new_node(nodeid):
+    print("Received new node")
+    print(nodeid)
+    if add_node(nodeid):
+     await broadcast_new_node(nodeid)
      return True
     else:
      return False

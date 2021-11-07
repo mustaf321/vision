@@ -33,3 +33,6 @@ manager = ConnectionManager()
 
 async def broadcast_new_alarm(nodeid:int,alram: Range):
     await manager.broadcast("NEW_ALARM", { "nodeid":nodeid,"max": alram.max, "min":alram.min})
+
+async def broadcast_new_node(nodeid:int):
+    await manager.broadcast("NEW_NODE", { "nodeid":nodeid})    
