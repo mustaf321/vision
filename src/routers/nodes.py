@@ -2,7 +2,7 @@ from fastapi import Response, APIRouter, HTTPException
 from fastapi.responses import JSONResponse 
 from pydantic import BaseModel
 from fastapi.encoders import jsonable_encoder
-from db.dbmanegment_handel import list_nodes, add_node, get_node, delete_node
+from engine.engine import remove_node,add_node,get_all_nodes,get_node
 router = APIRouter(
 
     prefix="/nodes",
@@ -18,13 +18,14 @@ class Details(BaseModel):
     
 @router.get("/list")
 async def listnodes():
-    result =list_nodes()
+    result = get_all_nodes()
+    print(result)
     result=jsonable_encoder(result)
     return JSONResponse(content=result)
 
 @router.get("/{nodeid}")
 async def getnode(nodeid: int):
-    result =get_node(nodeid)
+    result = get_node(nodeid)
 
     if result is None:
         raise HTTPException(status_code = 404)
@@ -41,7 +42,7 @@ async def addnode(nodeid:int,details:Details):
 
 @router.delete("/{nodeid}")
 async def deletenode(nodeid: int):
-    is_deleted = delete_node(nodeid)
+    is_deleted = remove_node(nodeid)
     if is_deleted:
         return JSONResponse(content={"status":"ok"})
     else:

@@ -21,19 +21,19 @@ def list_alarms():
     return results
 
 
-def add_alarm(nodeid, range):
+def add_alarm(alarm):
     print(db)
-    node_exists = nodes.find_one({"nodeid": nodeid})
-    print(nodeid)
+    node_exists = nodes.find_one({"nodeid": alarm.nodeid})
+    print(alarm.nodeid)
     print(node_exists)
     if node_exists is not None:
-        alarms.update({"nodeid":nodeid},{"nodeid": nodeid, "range":range.dict()},upsert=True)
+        alarms.update({"nodeid":alarm.nodeid},{"nodeid": alarm.nodeid, "min":alarm.min, "max":alarm.max},upsert=True)
         return True
     else:
      return False
     
 
-def get_alarm(nodeid):
+def list_alarm(nodeid):
     result = alarms.find_one({"nodeid":nodeid}, {"_id":0})
     return result
 
@@ -47,7 +47,9 @@ def list_nodes():
     results =[] 
     for result in nodes.find({},{"_id":0}):
      results.append(result)
+    
     print(results)
+    
     return results
 
 
@@ -59,7 +61,7 @@ def add_node(nodeid, details):
         return False
     
 
-def get_node(nodeid):
+def list_node(nodeid):
     result = nodes.find_one({"nodeid":nodeid}, {"_id":0})
     return result
 

@@ -4,9 +4,12 @@ import json
 from typing import List
 
 
-class Range(BaseModel):
-    max: int
-    min: int
+class Alarm(BaseModel):
+    nodeid:int
+    min : float
+    max : float
+
+
 
 
 class ConnectionManager:
@@ -31,8 +34,8 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-async def broadcast_new_alarm(nodeid:int,alram: Range):
-    await manager.broadcast("NEW_ALARM", { "nodeid":nodeid,"max": alram.max, "min":alram.min})
+async def broadcast_new_alarm(alram: Alarm):
+    await manager.broadcast("NEW_ALARM", { "nodeid":alram.nodeid,"max": alram.max, "min":alram.min})
 
 async def broadcast_new_node(nodeid:int):
     await manager.broadcast("NEW_NODE", { "nodeid":nodeid})    
