@@ -8,12 +8,10 @@ from fastapi.encoders import jsonable_encoder
 from routers import alarms, nodes
 from fastapi import WebSocket, WebSocketDisconnect
 from websocket.broadcaster import manager
+
 app = FastAPI()
 
-origins = [
-    
-    "http://localhost:19006",
-]
+origins = ['http://192.168.2.124']
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,8 +41,6 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-
-
 
 
 @app.get('/api/v1/measurements/measurment')

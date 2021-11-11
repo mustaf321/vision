@@ -25,6 +25,8 @@ async def listalarms():
     result=jsonable_encoder(result)
     return JSONResponse(content=result)
 
+
+
 @router.get("/{sensorid}")
 async def getalarm(sensorid: int):
     result = get_alarm(sensorid)
