@@ -22,12 +22,12 @@ def list_alarms():
 
 
 def add_alarm(alarm):
-    print(db)
+    print(alarm)
     node_exists = nodes.find_one({"nodeid": alarm.nodeid})
     print(alarm.nodeid)
     print(node_exists)
     if node_exists is not None:
-        alarms.update({"nodeid":alarm.nodeid},{"nodeid": alarm.nodeid, "min":alarm.min, "max":alarm.max},upsert=True)
+        alarms.update({"nodeid":alarm.nodeid},{"nodeid": alarm.nodeid, "min":alarm.min, "max":alarm.max, "status":False},upsert=True)
         return True
     else:
      return False

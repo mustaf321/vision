@@ -8,10 +8,10 @@ from fastapi.encoders import jsonable_encoder
 from routers import alarms, nodes
 from fastapi import WebSocket, WebSocketDisconnect
 from websocket.broadcaster import manager
-
+from engine.engine import monitoring
 app = FastAPI()
 
-origins = ['http://192.168.2.124']
+origins = ['']
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,7 +25,7 @@ app.include_router(nodes.router)
 db =[]
 
 class Measurement(BaseModel):
-    sensorid: int
+    nodeid: int
     temperature : float
     humidity : float
     SingleDS18B20 : float
@@ -46,7 +46,8 @@ async def websocket_endpoint(websocket: WebSocket):
 @app.get('/api/v1/measurements/measurment')
 def measurements():
    c =   db_handel.get_mesuremnt()
-   print(c)
+   
+   monitoring()
    return jsonable_encoder(c)
 
 @app.get('/api/v1/measurements/{measurment_id}')
@@ -59,9 +60,9 @@ def add_tempetratur( measurement : Measurement):
  db.append(measurement.dict())
  return db[-1]
 
-@app.put('/api/v1/temperatures/{sensorID}' )
-def update_measurement(sensorID: int, measurement : Measurement):
-  k = db_handel.add_tempetratur("mesungen",measurement.sensorid,measurement.temperature,measurement.humidity,measurement.SingleDS18B20)
+@app.put('/api/v1/temperatures/{nodeid}' )
+def update_measurement(nodeid: int, measurement : Measurement):
+  k = db_handel.add_tempetratur("mesungen",nodeid,measurement.temperature,measurement.humidity,measurement.SingleDS18B20)
   print(k)
 
 

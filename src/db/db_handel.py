@@ -3,7 +3,7 @@ import json
 from fastapi.params import Query
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
-token = "xl_5uteTN5MNikM6nWXBFfzXLRGmAwBl9QP3AcBSDYjbbOvtZGFj28cKUJM45phmB5HoMo83bOtOe1i1fbatjw=="
+token = "Fkjr_eD06afw_KQBwSJbJtYi90fLQ0mtKjmYGP3bXb2x-UgWaHDLCLVHbyzSXGlVpHhAuccq_L29jxIlkf768Q=="
 bucket = "messungen"
 org = "dev"
 client = InfluxDBClient(url="http://localhost:8086", token=token)
@@ -11,12 +11,12 @@ client = InfluxDBClient(url="http://localhost:8086", token=token)
 # You can generate a Token from the "Tokens Tab" in the UI
 
 
-def add_tempetratur(tabelname: str, tag: str, temp: float, humidity: float, SingleDS18B20: float):
+def add_tempetratur(tabelname: str, tag: int, temp: float, humidity: float, SingleDS18B20: float):
 
     write_api = client.write_api(write_options=SYNCHRONOUS)
 
     point = Point(tabelname)\
-        .tag("sensorid", tag)\
+        .tag("nodeid", tag)\
         .field("TEMP", temp)\
         .field("HUIM", humidity)\
         .field("SingleDS18B20", SingleDS18B20)
@@ -31,10 +31,10 @@ def get_mesuremnt():
     result={}
     for table in tables:
      for row in table.records:
+        
         values = row.values
-        sensorid = values['sensorid']
-        if not sensorid in result:
-            result [sensorid] = {'sensorid': sensorid}
-        result[sensorid][values['_field']]=values['_value']   
-    print(result)
+        nodeid = values['nodeid']
+        if not nodeid in result:
+            result [nodeid] = {'nodeid': nodeid}
+        result[nodeid][values['_field']]=values['_value']   
     return result

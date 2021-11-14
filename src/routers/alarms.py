@@ -16,6 +16,7 @@ class Alarm(BaseModel):
     nodeid:int
     min : float
     max : float
+    status: bool
 
 
     
