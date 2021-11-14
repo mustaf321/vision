@@ -3,10 +3,15 @@
 from websocket.broadcaster import broadcast_new_alarm, broadcast_new_node
 from db.dbmanegment_handel import list_alarms, add_alarm, list_alarm, delete_alarm, add_node, list_nodes, delete_node, list_node
 from db.db_handel import get_mesuremnt
-
-
+from pydantic import BaseModel, ValidationError
 # only for delay
 import time
+
+class Alarm(BaseModel):
+    nodeid:int
+    min : float
+    max : float
+    status: bool
 
 
 def get_all_alarms():
@@ -27,6 +32,14 @@ async def remove_alarm(nodeid):
     else:
         return False
 
+def defuse_alarm(nodeid):
+    x=get_alarm(nodeid)
+    if x:
+        x['status']=False
+        a = Alarm.parse_obj(x)
+        return add_alarm(a)
+    else:
+        return False
 
 async def received_new_alarm(alarm):
     print("Received new Alarm")
@@ -53,17 +66,16 @@ def monitoring():
         mesurement_nodeid = int(mesurement_index.get('nodeid'))
         alarm_nodeid = alarm_index.get('nodeid')
         if mesurement_nodeid is alarm_nodeid:
-            temp = mesurement_index.get('TEMP')
+            temp1 = mesurement_index.get('TEMP')
             hum = mesurement_index.get('HUM')
             temp2 = mesurement_index.get('SingleDS18B20')
+            temp=(temp1 +temp2) /2
             alarm_max = alarm_index.get('max')
             alarm_min = alarm_index.get('min')
             if temp > alarm_max or temp < alarm_min:
-                  alarm_index['staust']=True
-                  print("######")
-                  print(type(alarm_index))
-                  print("######")
-                  add_alarm(alarm_index)
+                  alarm_index['status']=True
+                  a = Alarm.parse_obj(alarm_index) 
+                  add_alarm(a)
                  
 
 
