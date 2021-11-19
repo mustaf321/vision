@@ -11,7 +11,7 @@ from websocket.broadcaster import manager
 from engine.engine import monitoring ,defuse_alarm
 app = FastAPI()
 
-origins = ['http//:localhost']
+origins = ['*']
 
 app.add_middleware(
     CORSMiddleware,
@@ -43,7 +43,7 @@ async def websocket_endpoint(websocket: WebSocket):
         manager.disconnect(websocket)
 
 
-@app.get('/api/v1/measurements/measurment')
+@app.get('/measurements/list')
 def measurements():
    c =   db_handel.get_mesuremnt()
    

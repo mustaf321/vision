@@ -34,7 +34,7 @@ async def getalarm(sensorid: int):
     return JSONResponse(content=jsonable_encoder(result))
 
 
-@router.post("/{sensorid}")
+@router.post("")
 async def setalarm(alarm: Alarm):
     node_exists = await received_new_alarm(alarm)
     if node_exists:

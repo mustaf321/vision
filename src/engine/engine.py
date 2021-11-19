@@ -76,6 +76,7 @@ def monitoring():
                   alarm_index['status']=True
                   a = Alarm.parse_obj(alarm_index) 
                   add_alarm(a)
+                  broadcast_new_alarm(a)
                  
 
 
