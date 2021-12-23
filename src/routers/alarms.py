@@ -14,7 +14,7 @@ router = APIRouter(
 
 class Alarm(BaseModel):
     nodeid: int
-    min: float
+    min:  float
     max: float
     status: bool
 
@@ -26,9 +26,9 @@ async def listalarms():
     return JSONResponse(content=result)
 
 
-@router.get("/{sensorid}")
-async def getalarm(sensorid: int):
-    result = get_alarm(sensorid)
+@router.get("/{nodeid}")
+async def getalarm(nodeid: int):
+    result = get_alarm(nodeid)
     if result is None:
         raise HTTPException(status_code=404)
     return JSONResponse(content=jsonable_encoder(result))
@@ -43,7 +43,7 @@ async def setalarm(alarm: Alarm):
         raise HTTPException(status_code=404)
 
 
-@router.post("/defuse/{sensorid}")
+@router.post("/defuse/{nodeid}")
 async def setalarm(nodeid: int):
     node_exists = defuse_alarm(nodeid)
 
@@ -54,9 +54,9 @@ async def setalarm(nodeid: int):
         raise HTTPException(status_code=404)
 
 
-@router.delete("/{sensorid}")
-async def deletealarm(sensorid: int):
-    is_deleted = await remove_alarm(sensorid)
+@router.delete("/{nodeid}")
+async def deletealarm(nodeid: int):
+    is_deleted = await remove_alarm(nodeid)
     if is_deleted:
         return JSONResponse(content={"status": "ok"})
     else:

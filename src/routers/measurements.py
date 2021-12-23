@@ -2,6 +2,7 @@ from typing import List
 from fastapi import Response, APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from db import db_handel
 from engine.engine import monitoring ,defuse_alarm, get_all_alarms, received_new_alarm, get_alarm, remove_alarm
 from fastapi.encoders import jsonable_encoder
 router = APIRouter(
@@ -17,7 +18,7 @@ class Measurement(BaseModel):
     SingleDS18B20 : float
 
 
-@router.get('/measurements/list')
+@router.get('/list')
 def measurements():
    c =   db_handel.get_mesuremnt()
    

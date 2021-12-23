@@ -8,6 +8,7 @@ class Alarm(BaseModel):
     nodeid:int
     min : float
     max : float
+    status: bool
 
 
 
@@ -35,7 +36,7 @@ manager = ConnectionManager()
 
 
 async def broadcast_new_alarm(alram: Alarm):
-    await manager.broadcast("NEW_ALARM", { "nodeid":alram.nodeid,"max": alram.max, "min":alram.min})
+    await manager.broadcast("NEW_ALARM", { "nodeid":alram.nodeid,"max": alram.max, "min":alram.min,"status":alram.status})
 
 async def broadcast_new_node(nodeid:int):
     await manager.broadcast("NEW_NODE", { "nodeid":nodeid})    

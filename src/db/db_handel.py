@@ -33,6 +33,7 @@ def get_mesuremnt():
      for row in table.records:
         
         values = row.values
+        print(values)
         nodeid = values['nodeid']
         if not nodeid in result:
             result [nodeid] = {'nodeid': nodeid}
