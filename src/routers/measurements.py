@@ -22,7 +22,7 @@ class Measurement(BaseModel):
 def measurements():
    c =   db_handel.get_mesuremnt()
    
-   monitoring()
+  # monitoring()
    return jsonable_encoder(c) 
 
 @router.get('/api/v1/measurements/{measurment_id}')

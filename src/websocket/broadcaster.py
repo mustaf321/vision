@@ -29,14 +29,15 @@ class ConnectionManager:
     async def broadcast(self, type: str, message: dict):
         for connection in self.active_connections:
             message["type"] = type
+            print("messege forwordet")
             await connection.send_text(json.dumps(message))
 
 
 manager = ConnectionManager()
 
 
-async def broadcast_new_alarm(alram: Alarm):
-    await manager.broadcast("NEW_ALARM", { "nodeid":alram.nodeid,"max": alram.max, "min":alram.min,"status":alram.status})
+async def broadcast_new_alarm(alarm: Alarm):
+    await manager.broadcast("NEW_ALARM", { "nodeid":alarm.nodeid,"max": alarm.max, "min":alarm.min,"status":alarm.status})
 
 async def broadcast_new_node(nodeid:int):
     await manager.broadcast("NEW_NODE", { "nodeid":nodeid})    
