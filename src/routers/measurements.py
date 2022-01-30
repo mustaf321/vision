@@ -19,9 +19,9 @@ class Measurement(BaseModel):
 
 @router.get('/list')
 def list_measurements():
-   c =  get_all_measurements()
-  # monitoring()
-   return jsonable_encoder(c) 
+    c =  get_all_measurements()
+    print(c)
+    return jsonable_encoder(c) 
 
 @router.get('/api/v1/measurements/{measurment_id}')
 async def get_measurement(measurment_id: int):

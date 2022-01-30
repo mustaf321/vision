@@ -55,7 +55,7 @@ async def received_new_alarm(alarm):
 async def add_measurement(nodeid, measurement):
   k = add_tempetratur("mesungen",nodeid,measurement.temperature,measurement.humidity,measurement.SingleDS18B20)
   await broadcast_new_measurement(measurement)
-  #monitoring()
+  await monitoring()
 
 def get_all_measurements():
     return get_mesuremnt()
@@ -64,7 +64,7 @@ def get_all_measurements():
 def  delete_influx_measurement(measurment_id):
   return True
 
-def monitoring():
+async def monitoring():
     mesurements = get_mesuremnt()
     alarms = get_all_alarms()
     for alarm in alarms:
@@ -88,11 +88,15 @@ def monitoring():
                 temp=(temp1 +temp2) /2
                 alarm_max = alarm.get('max')
                 alarm_min = alarm.get('min')
+                print(alarm_max)
+                print(alarm_min)
+                
                 if temp > alarm_max or temp < alarm_min:
+                    print("ALARM DETECTED")
                     alarm['status']=True
                     a = Alarm.parse_obj(alarm) 
                     add_alarm(a)
-                    broadcast_new_alarm(a)
+                    await broadcast_new_alarm(a)
                     
 
 

@@ -36,6 +36,6 @@ def get_mesuremnt():
         print(values)
         nodeid = values['nodeid']
         if not nodeid in result:
-            result [nodeid] = {'nodeid': nodeid}
+            result [nodeid] = {'nodeid': int(nodeid)}
         result[nodeid][values['_field']]=values['_value']   
     return result
