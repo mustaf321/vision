@@ -3,7 +3,7 @@ import json
 from fastapi.params import Query
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
-token = "Fkjr_eD06afw_KQBwSJbJtYi90fLQ0mtKjmYGP3bXb2x-UgWaHDLCLVHbyzSXGlVpHhAuccq_L29jxIlkf768Q=="
+token = "JgB6MmgiBryVOP08dEoopf-mPMODImlmHmekmoYZWzDA98HTX5GdgvC2Ay01utjPddK99claY-VcAHy2OQfgUw=="
 bucket = "messungen"
 org = "dev"
 client = InfluxDBClient(url="http://localhost:8086", token=token)

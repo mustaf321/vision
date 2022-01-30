@@ -27,7 +27,7 @@ def add_alarm(alarm):
     print(alarm.nodeid)
     print(node_exists)
     if node_exists is not None:
-        alarms.update({"nodeid":alarm.nodeid},{"nodeid": alarm.nodeid, "min":alarm.min, "max":alarm.max, "status":alarm.status},upsert=True)
+        alarms.update_one({"nodeid":alarm.nodeid},{"$set":{"nodeid": alarm.nodeid, "min":alarm.min, "max":alarm.max, "status":alarm.status}},upsert=True)
         print("addet")
         return True
     else:
@@ -58,7 +58,7 @@ def add_node(nodeid, details):
     if nodes.find_one({"nodeid":nodeid}):
         return True
     else:
-        nodes.insert({"nodeid":nodeid, "details":details.dict()})
+        nodes.insert_one({"nodeid":nodeid, "details":details.dict()})
         return False
     
 
