@@ -1,6 +1,6 @@
 
 
-from websocket.broadcaster import broadcast_new_alarm, broadcast_new_node
+from websocket.broadcaster import broadcast_new_alarm, broadcast_new_measurement, broadcast_new_node
 from db.dbmanegment_handel import list_alarms, add_alarm, list_alarm, delete_alarm, add_node, list_nodes, delete_node, list_node
 from db.db_handel import get_mesuremnt,add_tempetratur
 from pydantic import BaseModel, ValidationError
@@ -52,9 +52,10 @@ async def received_new_alarm(alarm):
     else:
         return False
 
-def add_measurement(nodeid, measurement):
+async def add_measurement(nodeid, measurement):
   k = add_tempetratur("mesungen",nodeid,measurement.temperature,measurement.humidity,measurement.SingleDS18B20)
-  monitoring()
+  await broadcast_new_measurement(measurement)
+  #monitoring()
 
 def get_all_measurements():
     return get_mesuremnt()
@@ -66,35 +67,33 @@ def  delete_influx_measurement(measurment_id):
 def monitoring():
     mesurements = get_mesuremnt()
     alarms = get_all_alarms()
-    print(measurements)
+    for alarm in alarms:
 
-    for mesurement in mesurements:
-        mesurement_index = mesurements.get(mesurement)
-        print(mesurement_index) 
-        print("+++")
-        print(alarms)
-        print("+++++++++++")
-        print(mesurement)
-        alarm_index = alarms[int(mesurement)-1]
+        for mesurement in mesurements:
 
-        print(alarm_index)
-       
 
-        mesurement_nodeid = int(mesurement_index.get('nodeid'))
-        alarm_nodeid = alarm_index.get('nodeid')
-        if mesurement_nodeid is alarm_nodeid:
-            temp1 = mesurement_index.get('TEMP')
-            hum = mesurement_index.get('HUM')
-            temp2 = mesurement_index.get('SingleDS18B20')
-            temp=(temp1 +temp2) /2
-            alarm_max = alarm_index.get('max')
-            alarm_min = alarm_index.get('min')
-            if temp > alarm_max or temp < alarm_min:
-                  alarm_index['status']=True
-                  a = Alarm.parse_obj(alarm_index) 
-                  add_alarm(a)
-                  broadcast_new_alarm(a)
-                 
+
+            mesurement_index = mesurements.get(mesurement)
+           
+
+        
+
+            mesurement_nodeid = int(mesurement_index.get('nodeid'))
+            alarm_nodeid = alarm.get('nodeid')
+            if mesurement_nodeid is alarm_nodeid:
+                print("ALARM SET")
+                temp1 = mesurement_index.get('TEMP')
+                hum = mesurement_index.get('HUM')
+                temp2 = mesurement_index.get('SingleDS18B20')
+                temp=(temp1 +temp2) /2
+                alarm_max = alarm.get('max')
+                alarm_min = alarm.get('min')
+                if temp > alarm_max or temp < alarm_min:
+                    alarm['status']=True
+                    a = Alarm.parse_obj(alarm) 
+                    add_alarm(a)
+                    broadcast_new_alarm(a)
+                    
 
 
 async def received_new_node(nodeid):

@@ -30,8 +30,8 @@ async def get_measurement(measurment_id: int):
 
 
 @router.put('/api/v1/temperatures/{nodeid}' )
-def update_measurement(nodeid: int, measurement : Measurement):
-  add_measurement(nodeid, measurement)
+async def update_measurement(nodeid: int, measurement : Measurement):
+  await add_measurement(nodeid, measurement)
 
 
     

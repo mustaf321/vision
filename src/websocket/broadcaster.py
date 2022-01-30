@@ -10,7 +10,11 @@ class Alarm(BaseModel):
     max : float
     status: bool
 
-
+class Measurement(BaseModel):
+    nodeid: int
+    temperature : float
+    humidity : float
+    SingleDS18B20 : float
 
 
 class ConnectionManager:
@@ -30,6 +34,7 @@ class ConnectionManager:
         data = {}
         data["type"] = type
         data["content"] = message
+        print(data)
         for connection in self.active_connections:
 
             print("messege forwordet")
@@ -45,3 +50,7 @@ async def broadcast_new_alarm(alarm: Alarm):
 
 async def broadcast_new_node(nodeid:int):
     await manager.broadcast("NEW_NODE", { "nodeid":nodeid})    
+
+
+async def broadcast_new_measurement(measurement: Measurement):
+    await manager.broadcast("NEW_MEASUREMENT", { "nodeid":measurement.nodeid,  "temperature": measurement.temperature,"humidity":measurement.humidity,"SingleDS18B20":measurement.SingleDS18B20 })   
