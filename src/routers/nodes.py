@@ -2,7 +2,7 @@ from fastapi import Response, APIRouter, HTTPException
 from fastapi.responses import JSONResponse 
 from pydantic import BaseModel
 from fastapi.encoders import jsonable_encoder
-from engine.engine import remove_node,add_node,get_all_nodes,get_node
+from core.engine import remove_node,add_node,get_all_nodes,get_node
 router = APIRouter(
 
     prefix="/nodes",

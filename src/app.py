@@ -8,7 +8,7 @@ from fastapi.encoders import jsonable_encoder
 from routers import alarms, nodes,measurements
 from fastapi import WebSocket, WebSocketDisconnect
 from websocket.broadcaster import manager
-from engine.engine import monitoring ,defuse_alarm
+from core.engine import monitoring ,defuse_alarm
 app = FastAPI()
 
 origins = ['*']

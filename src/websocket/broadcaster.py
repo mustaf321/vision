@@ -27,10 +27,14 @@ class ConnectionManager:
         self.active_connections.remove(websocket)
 
     async def broadcast(self, type: str, message: dict):
+        data = {}
+        data["type"] = type
+        data["content"] = message
         for connection in self.active_connections:
-            message["type"] = type
+
             print("messege forwordet")
-            await connection.send_text(json.dumps(message))
+            print(data)
+            await connection.send_text(json.dumps(data))
 
 
 manager = ConnectionManager()

@@ -2,7 +2,7 @@
 
 from websocket.broadcaster import broadcast_new_alarm, broadcast_new_node
 from db.dbmanegment_handel import list_alarms, add_alarm, list_alarm, delete_alarm, add_node, list_nodes, delete_node, list_node
-from db.db_handel import get_mesuremnt
+from db.db_handel import get_mesuremnt,add_tempetratur
 from pydantic import BaseModel, ValidationError
 # only for delay
 import time
@@ -12,6 +12,7 @@ class Alarm(BaseModel):
     min : float
     max : float
     status: bool
+
 
 
 def get_all_alarms():
@@ -51,17 +52,33 @@ async def received_new_alarm(alarm):
     else:
         return False
 
+def add_measurement(nodeid, measurement):
+  k = add_tempetratur("mesungen",nodeid,measurement.temperature,measurement.humidity,measurement.SingleDS18B20)
+  monitoring()
+
+def get_all_measurements():
+    return get_mesuremnt()
+
+
+def  delete_influx_measurement(measurment_id):
+  return True
 
 def monitoring():
     mesurements = get_mesuremnt()
     alarms = get_all_alarms()
+    print(measurements)
 
     for mesurement in mesurements:
         mesurement_index = mesurements.get(mesurement)
+        print(mesurement_index) 
+        print("+++")
+        print(alarms)
+        print("+++++++++++")
+        print(mesurement)
         alarm_index = alarms[int(mesurement)-1]
 
         print(alarm_index)
-        print(mesurement_index)
+       
 
         mesurement_nodeid = int(mesurement_index.get('nodeid'))
         alarm_nodeid = alarm_index.get('nodeid')

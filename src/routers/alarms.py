@@ -2,7 +2,7 @@ from typing import List
 from fastapi import Response, APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from engine.engine import defuse_alarm, get_all_alarms, received_new_alarm, get_alarm, remove_alarm
+from core.engine import defuse_alarm, get_all_alarms, received_new_alarm, get_alarm, remove_alarm
 from fastapi.encoders import jsonable_encoder
 router = APIRouter(
 
