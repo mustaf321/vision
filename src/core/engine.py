@@ -56,9 +56,9 @@ async def received_new_alarm(alarm):
         return False
 
 async def add_measurement(nodeid, measurement):
-  k = add_tempetratur("mesungen",nodeid,measurement.temperature,measurement.humidity,measurement.SingleDS18B20)
+  k = add_tempetratur("mesungen",nodeid,measurement.temperature,measurement.humidity,measurement.temperature2)
   await broadcast_new_measurement(measurement)
-  await monitoring()
+  await monitoring( measurement)
 
 def get_all_measurements():
     return get_mesuremnt()
@@ -67,27 +67,22 @@ def get_all_measurements():
 def  delete_influx_measurement(measurment_id):
   return True
 
-async def monitoring():
-    mesurements = get_mesuremnt()
+async def monitoring( measurement):
+    
     alarms = get_all_alarms()
     for alarm in alarms:
 
-        for mesurement in mesurements:
-
-
-
-            mesurement_index = mesurements.get(mesurement)
-           
+      
 
         
 
-            mesurement_nodeid = int(mesurement_index.get('nodeid'))
+            
             alarm_nodeid = alarm.get('nodeid')
-            if mesurement_nodeid is alarm_nodeid:
+            if measurement.nodeid is alarm_nodeid:
                 print("ALARM SET")
-                temp1 = mesurement_index.get('TEMP')
-                hum = mesurement_index.get('HUM')
-                temp2 = mesurement_index.get('SingleDS18B20')
+                temp1 = measurement.temperature
+                hum = measurement.humidity
+                temp2 = measurement.temperature2
                 temp=(temp1 +temp2) /2
                 alarm_max = alarm.get('max')
                 alarm_min = alarm.get('min')

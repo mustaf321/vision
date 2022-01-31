@@ -17,9 +17,9 @@ def add_tempetratur(tabelname: str, tag: int, temp: float, humidity: float, Sing
 
     point = Point(tabelname)\
         .tag("nodeid", tag)\
-        .field("TEMP", temp)\
-        .field("HUIM", humidity)\
-        .field("SingleDS18B20", SingleDS18B20)
+        .field("temperature2", temp)\
+        .field("humidity", humidity)\
+        .field("temperature2", SingleDS18B20)
     write_api.write(bucket, org, point)
 
     return True

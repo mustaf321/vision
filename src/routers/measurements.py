@@ -14,7 +14,7 @@ class Measurement(BaseModel):
     nodeid: int
     temperature : float
     humidity : float
-    SingleDS18B20 : float
+    temperature2 : float
 
 
 @router.get('/list')

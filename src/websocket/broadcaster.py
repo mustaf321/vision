@@ -14,7 +14,7 @@ class Measurement(BaseModel):
     nodeid: int
     temperature : float
     humidity : float
-    SingleDS18B20 : float
+    temperature2 : float
 
 
 class ConnectionManager:
@@ -55,4 +55,4 @@ async def broadcast_new_node(nodeid:int):
 
 
 async def broadcast_new_measurement(measurement: Measurement):
-    await manager.broadcast("NEW_MEASUREMENT", { "nodeid":measurement.nodeid,  "TEMP": measurement.temperature,"HUIM":measurement.humidity,"SingleDS18B20":measurement.SingleDS18B20 })   
+    await manager.broadcast("NEW_MEASUREMENT", { "nodeid":measurement.nodeid,  "TEMP": measurement.temperature,"HUIM":measurement.humidity,"SingleDS18B20":measurement.temperature2 })   
