@@ -45,7 +45,7 @@ async def setalarm(alarm: Alarm):
 
 @router.post("/defuse/{nodeid}")
 async def setalarm(nodeid: int):
-    node_exists = defuse_alarm(nodeid)
+    node_exists = await defuse_alarm(nodeid)
 
     if node_exists:
 

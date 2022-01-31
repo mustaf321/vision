@@ -33,12 +33,15 @@ async def remove_alarm(nodeid):
     else:
         return False
 
-def defuse_alarm(nodeid):
+async def defuse_alarm(nodeid):
     x=get_alarm(nodeid)
     if x:
         x['status']=False
         a = Alarm.parse_obj(x)
-        return add_alarm(a)
+        print(a)
+        add_alarm(a)
+        await broadcast_new_alarm(a)
+        return True
     else:
         return False
 

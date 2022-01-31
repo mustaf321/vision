@@ -45,6 +45,8 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
+
+
 async def broadcast_new_alarm(alarm: Alarm):
     await manager.broadcast("NEW_ALARM", { "nodeid":alarm.nodeid,"max": alarm.max, "min":alarm.min,"status":alarm.status})
 
