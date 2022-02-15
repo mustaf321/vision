@@ -9,8 +9,8 @@
  
 #define ss 15
 #define rst 16
-#define dio0 4
-#define SERVER_IP "192.168.2.124:8080"
+
+#define SERVER_IP "172.28.128.1:8080"
 String temp1;
 String hum;
 String del;
@@ -18,17 +18,21 @@ String del;
 char jsonOutput[500];
 const char* ssid = "WLAN-EUDSR4";
 const char* password = "9704142346724801";
-const size_t CAPACITY = JSON_OBJECT_SIZE(6);
-StaticJsonDocument<CAPACITY> doc; 
+ 
 void setup() {
   Serial.begin(115200);
-  while (!Serial);
-
+  
 WiFi.begin(ssid, password);
-
+int wifichek =0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
+    wifichek++;
     Serial.print(".");
+  if(wifichek ==50)
+  {Serial.println("");
+    Serial.println("cannot connect with WIFI please check the ssid and Password and reset the Device");
+    wifichek =0;
+    }
   }
   Serial.println("");
   Serial.print("Connected! IP address: ");
@@ -40,7 +44,7 @@ WiFi.begin(ssid, password);
  
   Serial.println("LoRa Receiver Callback");
  
-  LoRa.setPins(ss, rst, dio0);
+  LoRa.setPins(ss, rst);
  
   if (!LoRa.begin(915E6)) {
     Serial.println("Starting LoRa failed!");
@@ -61,13 +65,13 @@ void loop() {
   LoRa.receive();
  
    DynamicJsonDocument doc1(1024);
-  JsonObject object = doc.to<JsonObject>();
-  object["sensorID"] = "1";
+  JsonObject object = doc1.to<JsonObject>();
+  object["nodeid"] = "1";
   object["temperature"] = temp1;
   object["humidity"] = hum;
   object["temperature2"] = del ;
-  serializeJsonPretty(doc, jsonOutput);
-Serial.print(jsonOutput);
+  serializeJsonPretty(doc1, jsonOutput);
+Serial.print(object);
 
    if ((WiFi.status() == WL_CONNECTED)) {
 
@@ -76,21 +80,21 @@ Serial.print(jsonOutput);
 
     Serial.print("[HTTP] begin...\n");
     // configure traged server and url
-    http.begin(client, "http://"SERVER_IP"/api/v1/temperatures"); //HTTP
+    http.begin(client, "http://127.0.0.1:8080/measurements/api/v1/temperatures/1"); //HTTP
     http.addHeader("Content-Type", "application/json");
 
-    Serial.print("[HTTP] POST..." + String(jsonOutput) + "\n");
+    Serial.print("[HTTP] PUT..." + String(jsonOutput) + "\n");
     // start connection and send HTTP header and body
-   int httpCode = http.POST(jsonOutput);
+ 
+   int httpCode = http.PUT(jsonOutput);
     
-    Serial.print("ICh bin hier!!!!!!!");
-    // httpCode will be negative on error
+   // httpCode will be negative on error
     Serial.print(httpCode);
     if (httpCode > 0) {
       // HTTP header has been send and Server response header has been handled
       Serial.printf("[HTTP] PUT Response code: %d\n", httpCode);
       if (httpCode == 500) {http.end();
-        http.begin(client, "http://" SERVER_IP "/api/v1/temperatures"); //HTTP
+        http.begin(client, "http://127.0.0.1:8080/measurements/api/v1/temperatures/1"); //HTTP
         http.addHeader("Content-Type", "application/json");
 
         Serial.print("[HTTP] post..." + String(jsonOutput)+ "\n");
@@ -164,9 +168,5 @@ Serial.println("---------");
 temp1 = String(String(res[19])+String(res[20])+String(res[21])+String(res[22])+String(res[23]));
 hum = String(String(res[31])+String(res[32])+String(res[33])+String(res[34])+String(res[35]));
 del = String(String(res[45])+String(res[46])+String(res[47])+String(res[48])+String(res[49]));
-
-
-
-
 
 }
