@@ -2,7 +2,7 @@ from fastapi import Response, APIRouter, HTTPException
 from fastapi.responses import JSONResponse 
 from pydantic import BaseModel
 from fastapi.encoders import jsonable_encoder
-from core.engine import remove_node,add_node,get_all_nodes,get_node
+from core.engine import remove_node,add_node,get_all_nodes,get_node,received_new_node
 router = APIRouter(
 
     prefix="/nodes",
@@ -37,6 +37,7 @@ async def addnode(nodeid:int,details:Details):
     if node_exists:
         return HTTPException(status_code = 400)
     else:
+        await received_new_node(nodeid,details)
         return JSONResponse(content={"status":"ok"})
 
 

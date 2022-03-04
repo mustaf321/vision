@@ -16,6 +16,8 @@ class Alarm(BaseModel):
     nodeid: int
     min:  float
     max: float
+    min_hium:  float
+    max_hium: float
     status: bool
 
 

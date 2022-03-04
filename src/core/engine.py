@@ -1,19 +1,30 @@
 
 
+
 from websocket.broadcaster import broadcast_new_alarm, broadcast_new_measurement, broadcast_new_node
 from db.dbmanegment_handel import list_alarms, add_alarm, list_alarm, delete_alarm, add_node, list_nodes, delete_node, list_node
-from db.db_handel import get_mesuremnt,add_tempetratur
+from db.db_handel import get_mesuremnt,add_temperature
 from pydantic import BaseModel, ValidationError
 # only for delay
 import time
-
+import json
 class Alarm(BaseModel):
-    nodeid:int
-    min : float
-    max : float
+    nodeid: int
+    min:  float
+    max: float
+    min_hium:  float
+    max_hium: float
     status: bool
+class Details(BaseModel):
+    location: str
+    ip: str
+    name: str
 
-
+class Measurement(BaseModel):
+    nodeid: int
+    temperature : float
+    humidity : float
+    temperature2 : float
 
 def get_all_alarms():
     # only for showing cirle
@@ -56,7 +67,8 @@ async def received_new_alarm(alarm):
         return False
 
 async def add_measurement(nodeid, measurement):
-  k = add_tempetratur("mesungen",nodeid,measurement.temperature,measurement.humidity,measurement.temperature2)
+  k = add_temperature("mesungen",nodeid,measurement.temperature,measurement.humidity,measurement.temperature2)
+  print(k)
   await broadcast_new_measurement(measurement)
   await monitoring( measurement)
 
@@ -71,25 +83,21 @@ async def monitoring( measurement):
     
     alarms = get_all_alarms()
     for alarm in alarms:
-
-      
-
-        
-
-            
             alarm_nodeid = alarm.get('nodeid')
             if measurement.nodeid is alarm_nodeid:
-                print("ALARM SET")
+              
                 temp1 = measurement.temperature
                 hum = measurement.humidity
                 temp2 = measurement.temperature2
                 temp=(temp1 +temp2) /2
+                alarm_max_hium = alarm.get('max_hium')
+                alarm_min_hium = alarm.get('min_hium') 
                 alarm_max = alarm.get('max')
                 alarm_min = alarm.get('min')
-                print(alarm_max)
-                print(alarm_min)
-                
-                if temp > alarm_max or temp < alarm_min:
+            
+                print(alarm_min_hium)
+                print( alarm_max_hium)
+                if temp > alarm_max or temp < alarm_min or hum > alarm_max_hium or hum < alarm_min_hium : 
                     print("ALARM DETECTED")
                     alarm['status']=True
                     a = Alarm.parse_obj(alarm) 
@@ -98,11 +106,19 @@ async def monitoring( measurement):
                     
 
 
-async def received_new_node(nodeid):
+async def received_new_node(nodeid,details):
     print("Received new node")
     print(nodeid)
-    if add_node(nodeid):
-        await broadcast_new_node(nodeid)
+    
+    if add_node(nodeid,details):
+        x ={
+             nodeid:nodeid,
+             temperature :" ",
+             humidity :" ",
+             temperature2 :" "
+        }
+        y =  Measurement(x)
+        await add_measurement(nodeid, y)
         return True
     else:
         return False

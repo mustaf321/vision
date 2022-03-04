@@ -3,12 +3,14 @@ from pydantic import BaseModel
 import json
 from typing import List
 
-
 class Alarm(BaseModel):
-    nodeid:int
-    min : float
-    max : float
+    nodeid: int
+    min:  float
+    max: float
+    min_hium:  float
+    max_hium: float
     status: bool
+
 
 class Measurement(BaseModel):
     nodeid: int
@@ -48,7 +50,7 @@ manager = ConnectionManager()
 
 
 async def broadcast_new_alarm(alarm: Alarm):
-    await manager.broadcast("NEW_ALARM", { "nodeid":alarm.nodeid,"max": alarm.max, "min":alarm.min,"status":alarm.status})
+    await manager.broadcast("NEW_ALARM", { "nodeid":alarm.nodeid,"max": alarm.max, "min":alarm.min, "max_hium": alarm.max_hium, "min_hium":alarm.min_hium,"status":alarm.status})
 
 async def broadcast_new_node(nodeid:int):
     await manager.broadcast("NEW_NODE", { "nodeid":nodeid})    

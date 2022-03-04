@@ -11,7 +11,7 @@ client = InfluxDBClient(url="http://localhost:8086", token=token)
 # You can generate a Token from the "Tokens Tab" in the UI
 
 
-def add_tempetratur(tabelname: str, tag: int, temp: float, humidity: float, SingleDS18B20: float):
+def add_temperature(tabelname: str, tag: int, temp: float, humidity: float, SingleDS18B20: float):
 
     write_api = client.write_api(write_options=SYNCHRONOUS)
 
