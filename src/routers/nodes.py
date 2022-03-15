@@ -34,7 +34,8 @@ async def getnode(nodeid: int):
 @router.post("/{nodeid}")
 async def addnode(nodeid:int,details:Details):
     node_exists = add_node(nodeid,details)
-    if node_exists:
+    print(node_exists)
+    if node_exists :
         return HTTPException(status_code = 400)
     else:
         await received_new_node(nodeid,details)

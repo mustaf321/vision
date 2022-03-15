@@ -1,10 +1,11 @@
 
 
 
+from cgi import print_form
 from websocket.broadcaster import broadcast_new_alarm, broadcast_new_measurement, broadcast_new_node
 from db.dbmanegment_handel import list_alarms, add_alarm, list_alarm, delete_alarm, add_node, list_nodes, delete_node, list_node
 from db.db_handel import get_mesuremnt,add_temperature
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError, parse_obj_as
 # only for delay
 import time
 import json
@@ -67,12 +68,13 @@ async def received_new_alarm(alarm):
         return False
 
 async def add_measurement(nodeid, measurement):
-  k = add_temperature("mesungen",nodeid,measurement.temperature,measurement.humidity,measurement.temperature2)
+  k = add_temperature("messungen",nodeid,measurement.temperature,measurement.humidity,measurement.temperature2)
   print(k)
   await broadcast_new_measurement(measurement)
   await monitoring( measurement)
 
 def get_all_measurements():
+    
     return get_mesuremnt()
 
 
@@ -95,9 +97,12 @@ async def monitoring( measurement):
                 alarm_max = alarm.get('max')
                 alarm_min = alarm.get('min')
             
-                print(alarm_min_hium)
-                print( alarm_max_hium)
+                
                 if temp > alarm_max or temp < alarm_min or hum > alarm_max_hium or hum < alarm_min_hium : 
+                    print("temp Ist ")
+                    print(temp)
+                    print("hium ist " )
+                    print(hum)
                     print("ALARM DETECTED")
                     alarm['status']=True
                     a = Alarm.parse_obj(alarm) 
@@ -112,12 +117,12 @@ async def received_new_node(nodeid,details):
     
     if add_node(nodeid,details):
         x ={
-             nodeid:nodeid,
-             temperature :" ",
-             humidity :" ",
-             temperature2 :" "
+             "nodeid":nodeid,
+             "temperature" :0,
+             "humidity":0,
+             "temperature2" :0
         }
-        y =  Measurement(x)
+        y =  parse_obj_as(Measurement,x)
         await add_measurement(nodeid, y)
         return True
     else:

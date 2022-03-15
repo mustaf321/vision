@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+from click import prompt
 from fastapi.params import Query
 from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -11,15 +12,15 @@ client = InfluxDBClient(url="http://localhost:8086", token=token)
 # You can generate a Token from the "Tokens Tab" in the UI
 
 
-def add_temperature(tabelname: str, tag: int, temp: float, humidity: float, SingleDS18B20: float):
+def add_temperature(tabelname: str, tag: int, temperature: float, humidity: float, temperature2: float):
 
     write_api = client.write_api(write_options=SYNCHRONOUS)
 
     point = Point(tabelname)\
         .tag("nodeid", tag)\
-        .field("temperature2", temp)\
+        .field("temperature", temperature)\
         .field("humidity", humidity)\
-        .field("temperature2", SingleDS18B20)
+        .field("temperature2", temperature2)
     write_api.write(bucket, org, point)
 
     return True
@@ -38,4 +39,7 @@ def get_mesuremnt():
         if not nodeid in result:
             result [nodeid] = {'nodeid': int(nodeid)}
         result[nodeid][values['_field']]=values['_value']   
+    
+    print(result)
     return result
+

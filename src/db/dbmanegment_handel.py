@@ -24,8 +24,10 @@ def list_alarms():
 def add_alarm(alarm):
     print(alarm)
     node_exists = nodes.find_one({"nodeid": alarm.nodeid})
-    print(alarm.nodeid)
+  
     print(node_exists)
+    
+    
     if node_exists is not None:
         alarms.update_one({"nodeid":alarm.nodeid},{"$set":{"nodeid": alarm.nodeid, "min":alarm.min, "max":alarm.max, "min_hium":alarm.min_hium, "max_hium":alarm.max_hium, "status":alarm.status}},upsert=True)
         print("addet")

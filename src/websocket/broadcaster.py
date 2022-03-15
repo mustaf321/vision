@@ -57,4 +57,4 @@ async def broadcast_new_node(nodeid:int):
 
 
 async def broadcast_new_measurement(measurement: Measurement):
-    await manager.broadcast("NEW_MEASUREMENT", { "nodeid":measurement.nodeid,  "TEMP": measurement.temperature,"HUIM":measurement.humidity,"SingleDS18B20":measurement.temperature2 })   
+    await manager.broadcast("NEW_MEASUREMENT", { "nodeid":measurement.nodeid,  "temperature": measurement.temperature,"humidity":measurement.humidity,"temperature2":measurement.temperature2 })   
