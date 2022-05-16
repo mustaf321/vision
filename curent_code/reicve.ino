@@ -14,6 +14,7 @@ String temp1;
 String hum;
 String del;
 String nodeid;
+int go = 0;
 String res ="";
 char jsonOutput[500];
 const char* ssid = "WLAN-EUDSR4";
@@ -24,6 +25,7 @@ StaticJsonDocument<CAPACITY> doc;
 
 void onReceive(int packetSize) {
   // received a packet
+   go = 1;
    char str[packetSize]=""; 
  
   // read packet
@@ -115,7 +117,7 @@ void loop() {
   delay(3000);
    // put the radio into receive mode
   LoRa.receive();
- 
+ if(go==1){
    DynamicJsonDocument doc1(1024);
   JsonObject object = doc.to<JsonObject>();
   object["nodeid"] = nodeid;
@@ -140,7 +142,7 @@ void loop() {
 
    int httpCode = http.PUT(jsonOutput);
     
-    Serial.print("ICh bin hier!!!!!!!");
+
     // httpCode will be negative on error
     Serial.print(httpCode);
     if (httpCode > 0) {
@@ -166,7 +168,26 @@ void loop() {
     }
 
     http.end();
-    
+    go=0;
+  Serial.print("go is: ");
+  Serial.println(go);
+ 
+
     delay(10000);
+    
+  
+   
+  Serial.print("go is: ");
+  Serial.println(go);
+  
+  
   }
+ } 
+else{
+   temp1="00.00";
+   hum="00.00";
+   del="00.00";
+  Serial.println("No LoRa packge recivied ");
+  }  
+
 } 
