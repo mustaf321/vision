@@ -68,7 +68,7 @@ async def received_new_alarm(alarm):
         return False
 
 async def add_measurement(nodeid, measurement):
-  k = add_temperature("messungen",nodeid,measurement.temperature,measurement.humidity,measurement.temperature2)
+  k = add_temperature("mem",nodeid,measurement.temperature,measurement.humidity,measurement.temperature2)
   print(k)
   await broadcast_new_measurement(measurement)
   await monitoring( measurement)
