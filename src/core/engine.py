@@ -1,14 +1,16 @@
-
-
-
 from cgi import print_form
 from websocket.broadcaster import broadcast_new_alarm, broadcast_new_measurement, broadcast_new_node
 from db.dbmanegment_handel import list_alarms, add_alarm, list_alarm, delete_alarm, add_node, list_nodes, delete_node, list_node
 from db.db_handel import get_mesuremnt,add_temperature
 from pydantic import BaseModel, ValidationError, parse_obj_as
+from  websocket.notificationsender import sendnotifcation
 # only for delay
 import time
 import json
+
+
+
+
 class Alarm(BaseModel):
     nodeid: int
     min:  float
@@ -108,6 +110,10 @@ async def monitoring( measurement):
                     a = Alarm.parse_obj(alarm) 
                     add_alarm(a)
                     await broadcast_new_alarm(a)
+                    sendnotifcation()
+                    
+                    
+                    
                     
 
 
@@ -141,4 +147,5 @@ def get_node(nodeid):
 
 def remove_node(nodeid):
     time.sleep(2)
+
     return delete_node(nodeid)
