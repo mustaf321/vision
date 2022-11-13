@@ -9,84 +9,39 @@
 #define ss 15
 #define rst 16
 #define dio0 4
-#define SERVER_IP "192.168.2.120:8080"
+#define SERVER_IP "000.0000.0.2:8080"
 String temp1;
 String hum;
 String del;
 String nodeid;
-int go = 0;
-String res ="";
+String outgoing;  
 char jsonOutput[500];
-const char* ssid = "WLAN-EUDSR4";
-const char* password = "9704142346724801";
+int httplook = 0;
+int restcnt = 0;
+const char* ssid = "MagentaWLAN-GOO0";
+const char* password = "66624299097758068976";
 const size_t CAPACITY = JSON_OBJECT_SIZE(6);
 StaticJsonDocument<CAPACITY> doc; 
-
-
-void onReceive(int packetSize) {
-  // received a packet
-   go = 1;
-   char str[packetSize]=""; 
- 
-  // read packet
-  for (int i = 0; i < packetSize; i++) {
-
-  // revice bytes from lora
-  byte b = LoRa.read();
-  
- 
-  // translate bytes in to chars
-  char demo = (char) b ;
-  
-  
-  //save cahrs in arry
-  str[i]=demo;
-   
-  }
- 
- 
- 
- //create String out of the char arry
-  String res ="";
-   for(int j=0;j< packetSize; j++ ){
-   
-
-   res=res+String (str[j]);
-
-  
-   }
-
-Serial.println("revied package:");  
-Serial.println("---------");
-Serial.print("Package size:");
-Serial.println(packetSize);
-Serial.println(res);
- 
-// print RSSI of packet
-Serial.print("with RSSI ");
-Serial.println(LoRa.packetRssi());
-Serial.println("---------");
-
-
-nodeid = String(String(res[0]));
-temp1 = String(String(res[1])+String(res[2])+String(res[3])+String(res[4])+String(res[5]));
- 
-hum = String(String(res[6])+String(res[7])+String(res[8])+String(res[9])+String(res[10]));
-del = String(String(res[11])+String(res[12])+String(res[13])+String(res[14])+String(res[15]));
-
-
-
-
-}
+byte localAddress = 0x01;     // address of this device
+byte destination = 0x02;      // destination to send to
+int lastSendTime=0;
+int interval=0;
+int msgCount=0;
+byte  maxnodes =0x04;
 void setup() {
   Serial.begin(115200);
-  while (!Serial);
-
+  
 WiFi.begin(ssid, password);
-
+int wifichek =0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
+    wifichek++;
     Serial.print(".");
+  if(wifichek ==100)
+  {Serial.println("");
+    Serial.println("cannot connect with WIFI please check the ssid and Password and reset the Device");
+    wifichek =0;
+    }
   }
   Serial.println("");
   Serial.print("Connected! IP address: ");
@@ -100,27 +55,41 @@ WiFi.begin(ssid, password);
  
   LoRa.setPins(ss, rst, dio0);
  
-  if (!LoRa.begin(868E6)) {
+  if (!LoRa.begin(915E6)) {
     Serial.println("Starting LoRa failed!");
     while (1);
   }
  
-  // register the receive callback
+
   LoRa.onReceive(onReceive);
-
- delay(500);
-
+  LoRa.receive();
+  Serial.println("LoRa init succeeded.");
+  
   
 }
  
 void loop() {
-  delay(3000);
-   // put the radio into receive mode
-  LoRa.receive();
- if(go==1){
+  // register the receive callback
+
+  if (millis() - lastSendTime > interval) {
+ 
+    String message = "s";   // send a message
+    sendMessage(message);
+    Serial.println("Sending " + message +" to "+ destination);
+    lastSendTime = millis();            // timestamp the message
+    interval = random(2000) + 1000;    // 2-3 seconds
+    if(maxnodes== int(destination))
+    { Serial.print("resting des") ;
+      destination= 0x02;
+      }    
+   
+
+ 
+
+ if(httplook==1){
    DynamicJsonDocument doc1(1024);
   JsonObject object = doc.to<JsonObject>();
-  object["nodeid"] = nodeid;
+  object["nodeid"] = nodeid ;
   object["temperature"] = temp1;
   object["humidity"] = hum;
   object["temperature2"] = del ;
@@ -148,46 +117,91 @@ void loop() {
     if (httpCode > 0) {
       // HTTP header has been send and Server response header has been handled
       Serial.printf("[HTTP] PUT Response code: %d\n", httpCode);
-      if (httpCode == 500) {http.end();
-        http.begin(client, "http://" SERVER_IP "/measurements/api/v1/temperatures/1"); //HTTP
-        http.addHeader("Content-Type", "application/json");
-
-   
+      if (httpCode == 500) {
+        Serial.printf("[HTTP] PUT... failed, error: %s\n", http.errorToString(httpCode).c_str());
+     
       }
 
 
       // file found at server
-      if (httpCode == HTTP_CODE_OK) {
+      if (httpCode == 200) {
         const String& payload = http.getString();
         Serial.println("received payload:\n<<");
         Serial.println(payload);
         Serial.println(">>");
       }
     } else {
-      Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+      Serial.printf("[HTTP] PUT... failed, error: %s\n", http.errorToString(httpCode).c_str());
     }
-
-    http.end();
-    go=0;
-  Serial.print("go is: ");
-  Serial.println(go);
- 
-
-    delay(10000);
     
-  
-   
-  Serial.print("go is: ");
-  Serial.println(go);
-  
-  
+    http.end();
+    
+    httplook=0;
+    delay(10000);
+    destination++ ;  
   }
  } 
-else{
-   temp1="00.00";
-   hum="00.00";
-   del="00.00";
-  Serial.println("No LoRa packge recivied ");
-  }  
+LoRa.receive();
+  
+ }
+}
 
-} 
+void sendMessage(String outgoing) {
+  LoRa.beginPacket();                   // start packet
+  LoRa.write(destination);              // add destination address
+  LoRa.write(localAddress);             // add sender address
+  LoRa.write(msgCount);                 // add message ID
+  LoRa.write(outgoing.length());        // add payload length
+  LoRa.print(outgoing);                 // add payload
+  LoRa.endPacket();                     // finish packet and send it
+  msgCount++;                           // increment message ID
+}
+
+
+void onReceive(int packetSize) {
+
+  Serial.println("recviermode!!");
+  if (packetSize == 0) return;          // if there's no packet, return
+  
+  // read packet header bytes:
+  int recipient = LoRa.read();          // recipient address
+  byte sender = LoRa.read();            // sender address
+  byte incomingMsgId = LoRa.read();     // incoming msg ID
+  byte incomingLength = LoRa.read();    // incoming msg length
+
+  String incoming = "";                 // payload of packet
+  char str[packetSize];
+  while (LoRa.available()) {            // can't use readString() in callback, so
+    incoming += (char)LoRa.read();      // add bytes one by one
+  }
+    httplook=1;
+ // if (incomingLength != incoming.length()) {   // check length for error
+   // Serial.println("error: message length does not match length");
+   // return;                             // skip rest of function
+ // }
+
+  // if the recipient isn't this device or broadcast,
+  if (recipient != localAddress && recipient != 0xFF) {
+    Serial.println("This message is not for me.");
+    return;                             // skip rest of function
+  }
+
+  // if message is for this device, or broadcast, print details:
+  Serial.println("Received from: 0x" + String(sender, HEX));
+  Serial.println("Sent to: 0x" + String(recipient, HEX));
+  Serial.println("Message ID: " + String(incomingMsgId));
+  Serial.println("Message length: " + String(incomingLength));
+
+  Serial.println("temp1 is: " + incoming.substring(1,6));
+  temp1=incoming.substring(1,6);
+  Serial.println("hium is: " + incoming.substring(7,11));
+  hum=incoming.substring(6,11);
+  Serial.println("temp2 is: " + incoming.substring(8,16));
+  del=incoming.substring(11,16);
+  nodeid =  String(sender);
+  
+  Serial.println("Message: " + incoming);
+  Serial.println("RSSI: " + String(LoRa.packetRssi()));
+  Serial.println("Snr: " + String(LoRa.packetSnr()));
+  Serial.println();
+}
