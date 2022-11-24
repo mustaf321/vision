@@ -1,9 +1,5 @@
 
 get your ip with ipconfig before starting
 to strat the server 
-uvicorn app:app --host  192.168.2.120--port 8080 --reload
+uvicorn app:app --host <IP Address>--port 8080 --reload
 
-
-influx accoiunt 
-musti
-22Mustek22
